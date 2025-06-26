@@ -9,13 +9,13 @@ class AdventuresScreen extends StatelessWidget {
     final List<Map<String, String>> adventures = [
       {
         "name": "Skydiving",
-        "image": "lib/assets/images/adventures/skydiving.webp",
+        "image": "lib/assets/images/adventures/skydiving.jpg",
         "description": "Skydiving is an adrenaline-pumping activity where you jump from an aircraft and experience freefall before deploying a parachute to glide safely to the ground.",
         "location": "Various locations worldwide",
       },
       {
         "name": "Scuba Diving",
-        "image": "lib/assets/images/adventures/scuba_diving.webp",
+        "image": "lib/assets/images/adventures/scuba_diving.jpg",
         "description": "Scuba diving allows you to explore underwater worlds, including coral reefs, shipwrecks, and marine life. It requires training and certification.",
         "location": "Great Barrier Reef, Australia",
       },
@@ -27,13 +27,13 @@ class AdventuresScreen extends StatelessWidget {
       },
       {
         "name": "Bungee Jumping",
-        "image": "lib/assets/images/adventures/bungee_jumping.webp",
+        "image": "lib/assets/images/adventures/bungee_jumping.jpg",
         "description": "Bungee jumping is an extreme sport where you jump from a tall structure while connected to a large elastic cord, experiencing a freefall and rebound.",
         "location": "Queenstown, New Zealand",
       },
       {
         "name": "Hiking",
-        "image": "lib/assets/images/adventures/hiking.webp",
+        "image": "lib/assets/images/adventures/hiking.jpg",
         "description": "Hiking involves walking in natural environments, often on trails or paths in the mountains, forests, or countryside. It's a great way to explore nature and stay active.",
         "location": "Swiss Alps, Switzerland",
       },

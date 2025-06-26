@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_asst/widgets/bottom_nav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -16,14 +17,42 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _signup() async {
     if (_formKey.currentState!.validate()) {
       if (passwordController.text == confirmPasswordController.text) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
+        try {
+          // Sign up the user
+          final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
 
-        // Navigate to home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const BottomNavBar()),
-        );
+          // Send email verification
+          if (!userCredential.user!.emailVerified) {
+            await userCredential.user!.sendEmailVerification();
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Verification email sent. Please check your inbox.")),
+          );
+
+          // Save login flag (optional)
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', false); // Not logged in yet until email is verified
+
+          // Redirect to verification screen (create it if needed)
+          Navigator.pushReplacementNamed(context, '/verify-email');
+
+        } on FirebaseAuthException catch (e) {
+          String errorMessage = 'Signup failed.';
+          if (e.code == 'email-already-in-use') {
+            errorMessage = 'This email is already in use.';
+          } else if (e.code == 'invalid-email') {
+            errorMessage = 'Invalid email format.';
+          } else if (e.code == 'weak-password') {
+            errorMessage = 'Password should be at least 6 characters.';
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage)),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Passwords do not match!")),
@@ -36,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("lib/assets/images/login_background.webp"),
             fit: BoxFit.cover,
@@ -117,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            backgroundColor: Colors.indigo[40],
+                            backgroundColor: Colors.indigo[400],
                           ),
                           child: const Text("Sign Up", style: TextStyle(fontSize: 16)),
                         ),

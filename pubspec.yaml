@@ -30,9 +30,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   shared_preferences: ^2.2.2
 
+  geolocator: ^10.1.1
+  #geolocator: ^10.0.0
+  #google_maps_flutter: ^2.2.3
+  permission_handler: ^10.0.0
+
+  google_maps_flutter: ^2.5.0
+
+  http: ^0.13.6
+  firebase_core: ^3.14.0
+  firebase_auth: ^5.6.0
+
+
+firebase_core: ^2.25.4
+firebase_auth: ^4.18.3
+
+
+
+#geolocator:
+
+fluttertoast:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -49,7 +68,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  firebase_core: ^3.12.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -103,6 +121,37 @@ flutter:
       - lib/assets/images/beaches/seychelles.jpg
       - lib/assets/images/beaches/whitehaven.jpg
 
+      - lib/assets/images/cities/paris.jpg
+      - lib/assets/images/cities/newyork.webp
+      - lib/assets/images/cities/tokyo.jpg
+      - lib/assets/images/cities/rome.jpg
+      - lib/assets/images/cities/sydney.jpg
+
+      - lib/assets/images/adventures/hiking.jpg
+      - lib/assets/images/adventures/scuba_diving.jpg
+      - lib/assets/images/adventures/skydiving.jpg
+      - lib/assets/images/adventures/bungee_jumping.jpg
+      - lib/assets/images/adventures/rock_climbing.webp
+
+      - lib/assets/images/places/istanbul.jpg
+      - lib/assets/images/places/helsinki.webp
+      - lib/assets/images/places/maldives.jpg
+      - lib/assets/images/places/pompei.jpg
+      - lib/assets/images/places/tajmahal.jpg
+      - lib/assets/images/places/venice.jpg
+
+      - lib/assets/images/profile.jpeg
+
+      - lib/assets/images/famous_foods/buenos-aires-choripan.webp
+      - lib/assets/images/famous_foods/chilli_crab_singapore.webp
+      - lib/assets/images/famous_foods/fuchka.webp
+      - lib/assets/images/famous_foods/hot_pot_china.webp
+      - lib/assets/images/famous_foods/pizza.jpg
+      - lib/assets/images/famous_foods/tteokbokki-seoul.webp
+      - lib/assets/images/famous_foods/fish_and_chips_london.webp
+      - lib/assets/images/famous_foods/pineapple_bun_hongkong.webp
+      - lib/assets/images/famous_foods/roti_kanai_thailand.jpg
+
 
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -129,3 +178,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+

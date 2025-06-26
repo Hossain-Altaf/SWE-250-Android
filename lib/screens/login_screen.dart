@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_asst/widgets/bottom_nav_bar.dart';
-import 'package:travel_asst/screens/signup_screen.dart'; // Import the signup screen
+import 'package:travel_asst/screens/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,22 +14,53 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool _isLoading = false;
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      // Dummy authentication (Replace with Firebase or real auth)
-      if (emailController.text == "altaf@mail.com" && passwordController.text == "122333") {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
+      setState(() => _isLoading = true);
 
-        // Navigate to the home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const BottomNavBar()),
+      try {
+        final UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
         );
-      } else {
+
+        final user = userCredential.user;
+
+        if (user != null && user.emailVerified) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const BottomNavBar()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please verify your email first.")),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        String message = "Login failed";
+        if (e.code == 'user-not-found') {
+          message = "No user found with this email.";
+        } else if (e.code == 'wrong-password') {
+          message = "Incorrect password.";
+        } else if (e.code == 'invalid-email') {
+          message = "Invalid email format.";
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Invalid credentials! Try again.")),
+          SnackBar(content: Text(message)),
         );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Something went wrong.")),
+        );
+      } finally {
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -37,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("lib/assets/images/login_background.webp"),
             fit: BoxFit.cover,
@@ -93,7 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value!.isEmpty ? "Enter your email" : null,
+                          validator: (value) =>
+                          value!.isEmpty ? "Enter your email" : null,
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
@@ -108,32 +141,36 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           obscureText: true,
-                          validator: (value) => value!.isEmpty ? "Enter your password" : null,
+                          validator: (value) =>
+                          value!.isEmpty ? "Enter your password" : null,
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
+                        _isLoading
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            backgroundColor: Colors.indigo[40],
+                            backgroundColor: Colors.indigo[400],
                           ),
-                          child: const Text("Login", style: TextStyle(fontSize: 16)),
+                          child: const Text("Login",
+                              style: TextStyle(fontSize: 16)),
                         ),
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) =>
-                                  SignupScreen()
-                              ),
+                              MaterialPageRoute(
+                                  builder: (context) => SignupScreen()),
                             );
                           },
                           child: const Text(
-                            "Don't have an account? Sign up",
+                            "New user? Sign up here",
                             style: TextStyle(
                               color: Colors.blue,
                               fontSize: 16,
