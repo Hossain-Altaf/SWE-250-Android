@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({super.key});
 
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,  // Adjust size as needed
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // List of top adventures with their information
@@ -43,6 +54,7 @@ class AdventuresScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Top Adventures of the World"),
+        leading: customBackButton(context),
         backgroundColor: Colors.blueAccent,
       ),
       body: ListView.builder(

@@ -19,7 +19,7 @@ class _NearbySearchMapState extends State<NearbySearchMap> {
   Position? _currentPosition;
   List<Marker> _markers = [];
 
-  // ✅ Replace with your actual API key
+  //  API key
   final String _apiKey = 'AIzaSyDAAlBhbrd61My2s_u6nppknvJwlfjLTYA';
 
   @override

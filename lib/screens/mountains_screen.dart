@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 class MountainsScreen extends StatelessWidget {
   const MountainsScreen({super.key});
 
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,  // Adjust size as needed
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // List of top mountains with their information
@@ -37,12 +48,31 @@ class MountainsScreen extends StatelessWidget {
         "description": "Makalu is the fifth highest mountain in the world at 8,485 metres. It is located in the Mahalangur Himalayas 19 km southeast of Mount Everest, on the border between Nepal and China.",
         "height": "8,485 meters",
       },
-      // Add more mountains as needed
+      {
+        "name": "Annapurna",
+        "image": "lib/assets/images/mountains/annapurna.jpg",
+        "description": "Annapurna is a mountain situated in the Annapurna mountain range of Gandaki Province, north-central Nepal. It is the 10th highest mountain in the world at 8,091 metres above sea level and is well known for the difficulty and danger involved in its ascent",
+         "height":"8,091 metres",
+      },
+      {
+        "name": "Kilimanjaro",
+        "image": "lib/assets/images/mountains/kilimanjaro.jpg",
+        "description": "Mount Kilimanjaro is a dormant volcano in Tanzania. It is the highest mountain in Africa and the highest free-standing mountain above sea level in the world, at 5,895 m above sea level and 4,900 m above its plateau base",
+        "height": "5895 meters",
+      },
+      {
+        "name": "Mt. Fuji",
+        "image": "lib/assets/images/mountains/fuji.jpg",
+        "description": " Japan’s Mt. Fuji is an active volcano about 100 kilometers southwest of Tokyo. Commonly called “Fuji-san,” it’s the country’s tallest peak, at 3,776 meters. A pilgrimage site for centuries, it’s considered one of Japan’s 3 sacred mountains, and summit hikes remain a popular activity. Its iconic profile is the subject of numerous works of art, notably Edo Period prints by Hokusai and Hiroshige. ",
+        "height": " 3776 meters",
+      },
+
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Top Mountains of the World"),
+        leading: customBackButton(context),
         backgroundColor: Colors.blueAccent,
       ),
       body: ListView.builder(

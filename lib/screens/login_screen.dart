@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
@@ -81,13 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Card(
                 elevation: 8,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withOpacity(0.7), // Original opacity
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  padding: const EdgeInsets.all(20.0),
+                  width: MediaQuery.of(context).size.width * 0.8, // Original width
+                  padding: const EdgeInsets.all(25.0), // Slightly more padding
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -95,24 +96,36 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         ClipOval(
                           child: Container(
-                            width: 100,
-                            height: 100,
+                            width: 100, // Original size
+                            height: 100, // Original size
                             color: Colors.white.withOpacity(0.8),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(15.0),
                               child: Image.asset(
                                 "lib/assets/images/login3.webp",
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 25),
                         const Text(
-                          "Login",
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          "Welcome Back",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.indigo,
+                          ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 5),
+                        const Text(
+                          "Login to continue",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                         TextFormField(
                           controller: emailController,
                           decoration: InputDecoration(
@@ -123,12 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 20),
                           ),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) =>
                           value!.isEmpty ? "Enter your email" : null,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
                         TextFormField(
                           controller: passwordController,
                           decoration: InputDecoration(
@@ -139,44 +154,81 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 20),
                           ),
                           obscureText: true,
                           validator: (value) =>
                           value!.isEmpty ? "Enter your password" : null,
                         ),
-                        const SizedBox(height: 20),
-                        _isLoading
-                            ? const CircularProgressIndicator()
-                            : ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            backgroundColor: Colors.indigo[400],
-                          ),
-                          child: const Text("Login",
-                              style: TextStyle(fontSize: 16)),
-                        ),
                         const SizedBox(height: 10),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignupScreen()),
-                            );
-                          },
-                          child: const Text(
-                            "New user? Sign up here",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // Add forgot password functionality
+                            },
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.indigo),
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 25),
+                        _isLoading
+                            ? const CircularProgressIndicator(
+                          color: Colors.indigo,
+                        )
+                            : SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Colors.indigo[700],
+                              foregroundColor: Colors.white,
+                              elevation: 3,
+                            ),
+                            child: const Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "New user?",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            const SizedBox(width: 5),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignupScreen()),
+                                );
+                              },
+                              child: const Text(
+                                "Sign up",
+                                style: TextStyle(
+                                  color: Colors.indigo,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

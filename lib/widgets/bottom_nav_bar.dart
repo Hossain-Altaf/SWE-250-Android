@@ -6,10 +6,24 @@ import 'package:permission_handler/permission_handler.dart';
 import '../screens/home.dart';
 import '../models/trip_plan.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_webservice/places.dart';
+
 // ----------------------------- Trip Planner Screen -----------------------------
 
 class TripPlannerScreen extends StatefulWidget {
   const TripPlannerScreen({super.key});
+
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,  // Adjust size as needed
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
 
   @override
   State<TripPlannerScreen> createState() => _TripPlannerScreenState();
@@ -210,7 +224,8 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
   }
 }
 
-// ----------------------------- Nearby Attractions Screen -----------------------------
+// ----------------------------- Location Screen -----------------------------
+
 class NearbyAttractionsScreen extends StatefulWidget {
   const NearbyAttractionsScreen({super.key});
 
@@ -219,6 +234,8 @@ class NearbyAttractionsScreen extends StatefulWidget {
 }
 
 class _NearbyAttractionsScreenState extends State<NearbyAttractionsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: 'YOUR_GOOGLE_API_KEY');
   Position? _currentPosition;
   String _locationMessage = "Getting your location...";
   bool _isLoading = true;
@@ -288,6 +305,35 @@ class _NearbyAttractionsScreenState extends State<NearbyAttractionsScreen> {
     });
   }
 
+  Future<void> _searchPlace(String query) async {
+    if (query.isEmpty) return;
+
+    final response = await _places.searchByText(query);
+    if (response.status == 'OK' && response.results.isNotEmpty) {
+      final result = response.results.first;
+      final lat = result.geometry!.location.lat;
+      final lng = result.geometry!.location.lng;
+
+      setState(() {
+        _markers.clear();
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('searchedPlace'),
+            position: LatLng(lat, lng),
+            infoWindow: InfoWindow(title: result.name),
+          ),
+        );
+        _locationMessage = "${result.name}\nLat: ${lat.toStringAsFixed(4)}, Lng: ${lng.toStringAsFixed(4)}";
+      });
+
+      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No results found.")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -299,6 +345,34 @@ class _NearbyAttractionsScreenState extends State<NearbyAttractionsScreen> {
             onPressed: _determinePosition,
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: TextField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              onSubmitted: _searchPlace,
+              decoration: InputDecoration(
+                hintText: "Search for a place",
+                fillColor: Colors.white,
+                filled: true,
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() => _locationMessage = "Search cleared.");
+                  },
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -345,15 +419,86 @@ class _NearbyAttractionsScreenState extends State<NearbyAttractionsScreen> {
   }
 }
 
+
 // ----------------------------- Weather Screen -----------------------------
-class WeatherScreen extends StatelessWidget {
+class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
+  String? _weatherInfo;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeather();
+  }
+
+  Future<void> _fetchWeather() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      print("User location: ${position.latitude}, ${position.longitude}");
+
+      final snapshot = await FirebaseFirestore.instance
+          .collection('weather') // <- make sure this matches your Firestore collection
+          .get();
+
+      final nearby = snapshot.docs.where((doc) {
+        final data = doc.data();
+        final lat = data['lat'];
+        final lon = data['lon'];
+
+        if (lat == null || lon == null) return false;
+
+        final distance = Geolocator.distanceBetween(
+          position.latitude, position.longitude,
+          lat, lon,
+        );
+        return distance < 10000; // 10 km
+      }).toList();
+
+
+      if (nearby.isNotEmpty) {
+        final weather = nearby.first.data();
+        setState(() {
+          _weatherInfo = weather['report'];
+          _loading = false;
+        });
+      } else {
+        setState(() {
+          _weatherInfo = "No nearby weather data found.";
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _weatherInfo = "Failed to get weather: $e";
+        _loading = false;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Weather Updates")),
-      body: const Center(child: Text("Check the weather here!")),
+      body: Center(
+        child: _loading
+            ? const CircularProgressIndicator()
+            : Text(
+          _weatherInfo ?? "No data available.",
+          style: const TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }
@@ -420,6 +565,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: Image.asset("lib/assets/images/nav/plan_trip.webp", width: 24, height: 24),
             label: "Plan Trip",
+
           ),
           BottomNavigationBarItem(
             icon: Image.asset("lib/assets/images/nav/location.webp", width: 24, height: 24),

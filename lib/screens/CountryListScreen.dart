@@ -1,4 +1,3 @@
-// country_list_screen.dart
 import 'package:flutter/material.dart';
 import 'country_destinations_screen.dart';
 
@@ -24,7 +23,24 @@ class CountryListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Countries')),
+      appBar: AppBar(
+        title: const Text('Countries'),
+        leading: IconButton(
+          icon: Image.asset(
+            'lib/assets/images/icon/back2.png',
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        backgroundColor: Colors.blueAccent, // Optional: match your app theme
+        iconTheme: const IconThemeData(color: Colors.white), // For any default icons
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       body: ListView.builder(
         itemCount: countries.length,
         itemBuilder: (context, index) {

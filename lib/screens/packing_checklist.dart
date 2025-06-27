@@ -7,7 +7,16 @@ class PackingChecklistScreen extends StatefulWidget {
   @override
   State<PackingChecklistScreen> createState() => _PackingChecklistScreenState();
 }
-
+Widget customBackButton(BuildContext context) {
+  return IconButton(
+    icon: Image.asset(
+      'lib/assets/images/icon/back2.png',
+      width: 24,  // Adjust size as needed
+      height: 24,
+    ),
+    onPressed: () => Navigator.pop(context),
+  );
+}
 class _PackingChecklistScreenState extends State<PackingChecklistScreen> {
   final List<String> _items = [];
   final Set<int> _selectedIndexes = {};
@@ -59,6 +68,7 @@ class _PackingChecklistScreenState extends State<PackingChecklistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Packing Checklist"),
+        leading: customBackButton(context),
         actions: [
           if (_selectedIndexes.isNotEmpty)
             IconButton(

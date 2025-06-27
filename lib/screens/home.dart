@@ -1,33 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Your screen imports
-import 'package:travel_asst/screens/local_vehicle.dart';
-import 'package:travel_asst/screens/police.dart';
+// Screens
 import 'CountryListScreen.dart';
-import 'destinations_details.dart';
-import 'mountains_screen.dart';
+import 'NearbySearchMap.dart';
+import 'adventures_screen.dart';
 import 'beaches_screen.dart';
 import 'cities_screen.dart';
-import 'adventures_screen.dart';
 import 'country_screen.dart';
+import 'destinations_details.dart';
 import 'food_screen.dart';
 import 'hospital_screen.dart';
 import 'hotel_screen.dart';
+import 'local_vehicle.dart';
+import 'mountains_screen.dart';
+import 'police.dart';
 
 // Drawer option screens
+import 'about.dart';
+import 'insurance.dart';
+import 'local_guide.dart';
+import 'local_language.dart';
+import 'packing_checklist.dart';
 import 'profile.dart';
 import 'saved_destinations.dart';
-import 'packing_checklist.dart';
-import 'local_language.dart';
-import 'local_guide.dart';
 import 'sos.dart';
-import 'insurance.dart';
-import 'about.dart';
 import 'login_screen.dart';
 
-// NearbySearchMap screen import
-import 'NearbySearchMap.dart';
+// New screen
+import 'notification_screen.dart';
 
 Future<void> _logout(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
@@ -41,6 +42,17 @@ Future<void> _logout(BuildContext context) async {
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,  // Adjust size as needed
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +76,22 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
+        actions: [
+
+          IconButton(
+            icon: Image.asset(
+              'lib/assets/images/notification_icon.png', // Your image path
+              width: 26, // Adjust size as needed
+              height: 26,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationScreen()),
+              );
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -73,83 +101,27 @@ class HomeScreen extends StatelessWidget {
               decoration: const BoxDecoration(color: Colors.blueAccent),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CircleAvatar(
+                children: const [
+                  CircleAvatar(
                     radius: 30,
                     backgroundImage: AssetImage("lib/assets/images/drawer/profile.png"),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
+                  SizedBox(height: 10),
+                  Text(
                     "Welcome, Traveler!",
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ],
               ),
             ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/profile_logo.webp", width: 30, height: 30),
-              title: const Text("My Profile"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/saved2.jpg", width: 30, height: 30),
-              title: const Text("Saved Destinations"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SavedDestinationsScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/pack.jpg", width: 30, height: 30),
-              title: const Text("Packing Checklist"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const PackingChecklistScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/lang.jpg", width: 30, height: 30),
-              title: const Text("Local Language"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const LocalLanguageScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/guide.jpg", width: 30, height: 30),
-              title: const Text("Local guide"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const LocalGuideScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/sos.jpg", width: 30, height: 30),
-              title: const Text("SOS"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SosScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/ins.jpg", width: 30, height: 30),
-              title: const Text("Travel Insurance Info"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const TravelInsuranceScreen()));
-              },
-            ),
-            ListTile(
-              leading: Image.asset("lib/assets/images/drawer/abt.png", width: 30, height: 30),
-              title: const Text("About"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const AboutScreen()));
-              },
-            ),
+            _buildDrawerItem(context, "My Profile", "profile_logo.webp", const ProfileScreen()),
+            _buildDrawerItem(context, "Saved Destinations", "saved2.jpg", const SavedDestinationsScreen()),
+            _buildDrawerItem(context, "Packing Checklist", "pack.jpg", const PackingChecklistScreen()),
+            _buildDrawerItem(context, "Local Language", "lang.jpg", const LocalLanguageScreen()),
+            _buildDrawerItem(context, "Local guide", "guide.jpg", const LocalGuideScreen()),
+            _buildDrawerItem(context, "SOS", "sos.jpg", const SosScreen()),
+            _buildDrawerItem(context, "Travel Insurance Info", "ins.jpg", const TravelInsuranceScreen()),
+            _buildDrawerItem(context, "About", "abt.png", const AboutScreen()),
             ListTile(
               leading: Image.asset("lib/assets/images/drawer/logout.jpg", width: 30, height: 30),
               title: const Text("Logout", style: TextStyle(color: Colors.red)),
@@ -168,12 +140,10 @@ class HomeScreen extends StatelessWidget {
               child: Image.asset("lib/assets/images/travel_banner.webp", fit: BoxFit.cover),
             ),
             const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                "Explore by Category",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Explore by Category", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), ),
+
             ),
             const SizedBox(height: 8),
             Padding(
@@ -189,18 +159,27 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                "Popular Destinations",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Popular Destinations", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), ),
+
             ),
             const SizedBox(height: 10),
             _buildDestinationList(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDrawerItem(BuildContext context, String title, String asset, Widget screen) {
+    return ListTile(
+      leading: Image.asset("lib/assets/images/drawer/$asset", width: 30, height: 30),
+      title: Text(title),
+      onTap: () {
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+      },
     );
   }
 
@@ -230,16 +209,17 @@ class HomeScreen extends StatelessWidget {
         "name": "Bali, Indonesia",
         "image": "lib/assets/images/bali.webp",
         "description": "Bali is an Indonesian island known for its forested volcanic mountains, iconic rice paddies, beaches, and coral reefs.",
+
       },
       {
         "name": "Paris, France",
         "image": "lib/assets/images/paris.webp",
-        "description": "Paris, the capital of France, is known for its art, gastronomy, and culture. Iconic landmarks include the Eiffel Tower and Notre-Dame Cathedral.",
+        "description": "Paris, the capital of France, is known for its art, gastronomy, and culture.",
       },
       {
         "name": "Tokyo, Japan",
         "image": "lib/assets/images/tokyo.jpg",
-        "description": "Tokyo, the capital of Japan, is a bustling metropolis blending ultramodern and traditional architecture, with vibrant nightlife and rich culture.",
+        "description": "Tokyo blends ultramodern and traditional architecture, nightlife, and rich culture.",
       },
       {
         "name": "Amazon, Brazil",
@@ -316,12 +296,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: const Text(
-            "More Options",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text("More Options", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 10),
         Padding(
@@ -335,12 +312,10 @@ class HomeScreen extends StatelessWidget {
             children: [
               _buildOptionCard(context, "Destinations by Country", "lib/assets/images/options/country.webp", CountryListScreen()),
               _buildOptionCard(context, "Famous Foods", "lib/assets/images/options/food.webp", const FoodsScreen()),
-              // NearbySearchMap for these options
               _buildOptionCard(context, "Nearest Hospital", "lib/assets/images/options/hospital.webp", NearbySearchMap(placeType: 'hospital')),
               _buildOptionCard(context, "Nearest Hotels", "lib/assets/images/options/hotel.jpg", NearbySearchMap(placeType: 'lodging')),
               _buildOptionCard(context, "Local Transport", "lib/assets/images/options/transport.webp", NearbySearchMap(placeType: 'transit_station')),
               _buildOptionCard(context, "Local Police", "lib/assets/images/options/police.webp", NearbySearchMap(placeType: 'police')),
-
             ],
           ),
         ),

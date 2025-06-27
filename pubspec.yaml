@@ -32,12 +32,17 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.2.2
 
+  cloud_firestore: ^5.0.0
+    #uses-material-design: true
+
   geolocator: ^10.1.1
   #geolocator: ^10.0.0
   #google_maps_flutter: ^2.2.3
   permission_handler: ^10.0.0
 
   google_maps_flutter: ^2.5.0
+
+  google_maps_webservice: ^0.0.20-nullsafety.5
 
   http: ^0.13.6
   firebase_core: ^3.14.0
@@ -46,6 +51,8 @@ dependencies:
 
 firebase_core: ^2.25.4
 firebase_auth: ^4.18.3
+
+badges: ^3.0.0
 
 
 
@@ -110,11 +117,16 @@ flutter:
       - lib/assets/images/login_logo.webp
       - lib/assets/images/drawer/logout.jpg
       - lib/assets/images/login3.webp
+
       - lib/assets/images/mountains/Kangchenjunga.webp
       - lib/assets/images/mountains/everest.webp
       - lib/assets/images/mountains/k2.webp
       - lib/assets/images/mountains/makalu.webp
+      - lib/assets/images/mountains/annapurna.jpg
+      - lib/assets/images/mountains/fuji.jpg
+      - lib/assets/images/mountains/kilimanjaro.jpg
       - lib/assets/images/mountains/Lhotse.jpg
+
       - lib/assets/images/beaches/bora_bora.jpg
       - lib/assets/images/beaches/mavi.jpg
       - lib/assets/images/beaches/maldives.jpg
@@ -152,6 +164,36 @@ flutter:
       - lib/assets/images/famous_foods/pineapple_bun_hongkong.webp
       - lib/assets/images/famous_foods/roti_kanai_thailand.jpg
 
+      - lib/assets/images/notification_icon.png
+      - lib/assets/images/icon/back2.png
+
+      - lib/assets/images/country_plc/cox.jpg
+      - lib/assets/images/country_plc/kaptai.jpg
+      - lib/assets/images/country_plc/sreemongol.jpg
+      - lib/assets/images/country_plc/sundarban.jpg
+      - lib/assets/images/country_plc/tanguar.webp
+
+      - lib/assets/images/country_plc/geneva.jpg
+      - lib/assets/images/country_plc/barca.jpg
+      - lib/assets/images/country_plc/berlin.jpg
+      - lib/assets/images/country_plc/bhutan.jpg
+      - lib/assets/images/country_plc/bombey.jpg
+      - lib/assets/images/country_plc/cox.jpg
+      - lib/assets/images/country_plc/darjeeling.jpg
+      - lib/assets/images/country_plc/delhi.jpg
+      - lib/assets/images/country_plc/kaptai.jpg
+      - lib/assets/images/country_plc/kashmir.jpg
+      - lib/assets/images/country_plc/meghalaya.jpg
+      - lib/assets/images/country_plc/moscow.jpg
+      - lib/assets/images/country_plc/napoli.jpg
+      - lib/assets/images/country_plc/nepal.jpg
+      - lib/assets/images/country_plc/norway.jpg
+      - lib/assets/images/country_plc/rio.jpg
+      - lib/assets/images/country_plc/sreemongol.jpg
+      - lib/assets/images/country_plc/sundarban.jpg
+      - lib/assets/images/country_plc/sweden.jpg
+      - lib/assets/images/country_plc/tanguar.webp
+      - lib/assets/images/country_plc/hels.jpg
 
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

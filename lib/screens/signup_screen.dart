@@ -13,31 +13,29 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   Future<void> _signup() async {
     if (_formKey.currentState!.validate()) {
       if (passwordController.text == confirmPasswordController.text) {
+        setState(() => _isLoading = true);
         try {
-          // Sign up the user
           final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
 
-          // Send email verification
           if (!userCredential.user!.emailVerified) {
             await userCredential.user!.sendEmailVerification();
           }
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', false);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Verification email sent. Please check your inbox.")),
           );
 
-          // Save login flag (optional)
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('isLoggedIn', false); // Not logged in yet until email is verified
-
-          // Redirect to verification screen (create it if needed)
           Navigator.pushReplacementNamed(context, '/verify-email');
 
         } on FirebaseAuthException catch (e) {
@@ -52,6 +50,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(errorMessage)),
           );
+        } finally {
+          setState(() => _isLoading = false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,6 +89,21 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        ClipOval(
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.white.withOpacity(0.8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                "lib/assets/images/login3.webp",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         const Text(
                           "Sign Up",
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -104,9 +119,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value!.isEmpty ? "Enter your email" : null,
+                          validator: (value) =>
+                          value!.isEmpty ? "Enter your email" : null,
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
@@ -119,9 +137,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
                           ),
                           obscureText: true,
-                          validator: (value) => value!.isEmpty ? "Enter your password" : null,
+                          validator: (value) =>
+                          value!.isEmpty ? "Enter your password" : null,
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
@@ -134,21 +155,34 @@ class _SignupScreenState extends State<SignupScreen> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
                           ),
                           obscureText: true,
-                          validator: (value) => value!.isEmpty ? "Confirm your password" : null,
+                          validator: (value) =>
+                          value!.isEmpty ? "Confirm your password" : null,
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
+                        _isLoading
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
                           onPressed: _signup,
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            backgroundColor: Colors.indigo[400],
+                            backgroundColor: Colors.indigo[700],
+                            foregroundColor: Colors.white,
                           ),
-                          child: const Text("Sign Up", style: TextStyle(fontSize: 16)),
+                          child: const Text(
+                            "SIGN UP",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         GestureDetector(

@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 class FoodsScreen extends StatelessWidget {
   const FoodsScreen({super.key});
 
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,  // Adjust size as needed
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
   // List of famous foods with image paths and names
   final List<Map<String, String>> foods = const [
     {
@@ -48,6 +59,7 @@ class FoodsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Famous Foods"),
+        leading: customBackButton(context),
         backgroundColor: Colors.orangeAccent,
       ),
       body: ListView.builder(

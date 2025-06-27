@@ -13,6 +13,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String mobile = "01712345678";
   String bloodGroup = "O+";
 
+  // Custom back button widget
+  Widget customBackButton(BuildContext context) {
+    return IconButton(
+      icon: Image.asset(
+        'lib/assets/images/icon/back2.png',
+        width: 24,
+        height: 24,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
   void _editProfile() {
     final nameController = TextEditingController(text: name);
     final emailController = TextEditingController(text: email);
@@ -73,7 +85,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final String profileImage = "lib/assets/images/profile.jpeg";
 
     return Scaffold(
-      appBar: AppBar(title: const Text("My Profile")),
+      appBar: AppBar(
+        title: const Text("My Profile"),
+        leading: customBackButton(context), // Add custom back button here
+        backgroundColor: Colors.blueAccent, // Optional: match your app theme
+        iconTheme: const IconThemeData(color: Colors.white), // For any default icons
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
